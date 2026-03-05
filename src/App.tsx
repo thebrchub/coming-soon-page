@@ -1,8 +1,7 @@
-import { Mail, ArrowRight, Sparkles, Rocket } from 'lucide-react';
+import { Mail, ArrowRight, Sparkles, Rocket, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { InteractiveLogo } from './components/InteractiveLogo';
 
-// Refined Ribbon Text with lower opacity and clean spacing
 // Refined Ribbon Text with a neon blue glow effect
 const RibbonText = () => (
   <div className="flex items-center gap-12 whitespace-nowrap opacity-40">
@@ -38,26 +37,22 @@ function App() {
     >
       <div className="absolute inset-0 bg-black/85 z-0 pointer-events-none"></div>
       
-      {/* --- REFINED INFINITE RIBBONS --- */}
-      {/* Reduced width and set background to transparent to let the stars peek through */}
-      
-    {/* Left Ribbon - Moving Down with Glow Border */}
-<div className="absolute left-0 top-0 h-full w-10 md:w-16 bg-transparent border-r border-blue-500/20 shadow-[4px_0_20px_rgba(59,130,246,0.1)] z-10 flex items-center justify-center overflow-hidden">
-  <div className="w-auto h-auto rotate-90 flex animate-infinite-scroll-down">
-    <RibbonText />
-    <RibbonText />
-    <RibbonText />
-  </div>
-</div>
+      {/* --- INFINITE RIBBONS --- */}
+      <div className="absolute left-0 top-0 h-full w-10 md:w-16 bg-transparent border-r border-blue-500/20 shadow-[4px_0_20px_rgba(59,130,246,0.1)] z-10 flex items-center justify-center overflow-hidden">
+        <div className="w-auto h-auto rotate-90 flex animate-infinite-scroll-down">
+          <RibbonText />
+          <RibbonText />
+          <RibbonText />
+        </div>
+      </div>
 
-{/* Right Ribbon - Moving Up with Glow Border */}
-<div className="absolute right-0 top-0 h-full w-10 md:w-16 bg-transparent border-l border-blue-500/20 shadow-[-4px_0_20px_rgba(59,130,246,0.1)] z-10 flex items-center justify-center overflow-hidden">
-  <div className="w-auto h-auto rotate-90 flex animate-infinite-scroll-up">
-    <RibbonText />
-    <RibbonText />
-    <RibbonText />
-  </div>
-</div>
+      <div className="absolute right-0 top-0 h-full w-10 md:w-16 bg-transparent border-l border-blue-500/20 shadow-[-4px_0_20px_rgba(59,130,246,0.1)] z-10 flex items-center justify-center overflow-hidden">
+        <div className="w-auto h-auto rotate-90 flex animate-infinite-scroll-up">
+          <RibbonText />
+          <RibbonText />
+          <RibbonText />
+        </div>
+      </div>
 
       {/* --- MAIN CONTENT --- */}
       <main className="z-20 flex-1 flex flex-col items-center justify-center text-center max-w-4xl mx-auto w-full px-12 md:px-24">
@@ -73,10 +68,11 @@ function App() {
           </span>
         </h1>
         
-        <p className="text-gray-300 text-base md:text-xl lg:text-2xl mb-10 max-w-xl font-medium drop-shadow-md leading-relaxed px-4">
-          One hub. Infinite connections. <br className="hidden md:block" />
-          The insanely fast platform for your global network.
-        </p>
+        {/* THE STACKED TAGLINE: Fixed for mobile and desktop */}
+        <div className="text-gray-300 text-sm md:text-xl lg:text-2xl mb-10 font-medium drop-shadow-md leading-relaxed px-4">
+          <p className="mb-1">One hub. Infinite connections.</p>
+          <p className="opacity-80">The insanely fast platform for your global network.</p>
+        </div>
 
         <div className="w-full max-w-md px-4">
           {submitted ? (
@@ -85,21 +81,24 @@ function App() {
               <span className="font-bold text-lg">You're on the list!</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="w-full relative group flex items-center">
-              <Mail className="absolute left-5 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors z-10" />
-              <input 
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Join the waitlist..." 
-                required
-                className="w-full bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 hover:border-white/30 rounded-full py-5 pl-14 pr-36 text-white text-base focus:outline-none focus:border-blue-500 transition-all placeholder:text-gray-600 shadow-2xl"
-              />
+            <form onSubmit={handleSubmit} className="flex flex-col md:block relative group">
+              <div className="relative w-full">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors z-10" />
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Join the waitlist..." 
+                  required
+                  className="w-full bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 hover:border-white/30 rounded-2xl md:rounded-full py-4 md:py-5 pl-14 pr-4 md:pr-40 text-white text-base focus:outline-none focus:border-blue-500 transition-all placeholder:text-gray-600 shadow-2xl"
+                />
+              </div>
+              
               <button 
                 type="submit"
-                className="absolute right-2 top-2 bottom-2 bg-white text-black hover:bg-gray-200 font-bold px-6 rounded-full transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
+                className="mt-3 md:mt-0 md:absolute md:right-2 md:top-2 md:bottom-2 bg-white text-black hover:bg-gray-200 font-bold py-4 md:py-0 px-8 rounded-2xl md:rounded-full transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
               >
-                Access <ArrowRight className="w-4 h-4" />
+                Notify Me <Bell className="w-4 h-4" />
               </button>
             </form>
           )}

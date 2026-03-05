@@ -1,4 +1,4 @@
-import { Mail, ArrowRight, Sparkles, Rocket, Bell } from 'lucide-react';
+import { Mail,Sparkles, Rocket, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { InteractiveLogo } from './components/InteractiveLogo';
 

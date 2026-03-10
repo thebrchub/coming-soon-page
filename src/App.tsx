@@ -2,6 +2,13 @@ import { Mail,Sparkles, Rocket, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { InteractiveLogo } from './components/InteractiveLogo';
 
+const MAIL_PORTER_URL = import.meta.env.VITE_MAIL_PORTER_URL;
+const MAIL_PORTER_API_KEY = import.meta.env.VITE_MAIL_PORTER_API_KEY;
+const MAIL_PORTER_NAME = import.meta.env.VITE_MAIL_PORTER_NAME ?? 'zquab';
+const MAIL_PORTER_BRAND = import.meta.env.VITE_MAIL_PORTER_BRAND ?? 'zquab';
+const MAIL_PORTER_MESSAGE = import.meta.env.VITE_MAIL_PORTER_MESSAGE ?? 'Thanks for signing up.';
+const MAIL_PORTER_SUBJECT = import.meta.env.VITE_MAIL_PORTER_SUBJECT ?? 'Welcome to zQuab - Early Access';
+
 // Refined Ribbon Text with a neon blue glow effect
 const RibbonText = () => (
   <div className="flex items-center gap-12 whitespace-nowrap opacity-40">
@@ -19,12 +26,60 @@ const RibbonText = () => (
 function App() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.trim()) {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      return;
+    }
+
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    try {
+      if (!MAIL_PORTER_URL || !MAIL_PORTER_API_KEY) {
+        throw new Error('Email service is not configured. Please set VITE_MAIL_PORTER_URL and VITE_MAIL_PORTER_API_KEY.');
+      }
+
+      const response = await fetch(MAIL_PORTER_URL, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'x-api-key': MAIL_PORTER_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: MAIL_PORTER_NAME,
+          email: trimmedEmail,
+          message: MAIL_PORTER_MESSAGE,
+          brand: MAIL_PORTER_BRAND,
+          subject: MAIL_PORTER_SUBJECT,
+        }),
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to join the waitlist. Please try again.';
+        try {
+          const errorData = await response.json();
+          if (typeof errorData?.message === 'string' && errorData.message.trim()) {
+            errorMessage = errorData.message;
+          }
+        } catch {
+          // Keep fallback message when response is not valid JSON.
+        }
+        throw new Error(errorMessage);
+      }
+
       setSubmitted(true);
       setEmail('');
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Failed to join the waitlist.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -96,11 +151,15 @@ function App() {
               
               <button 
                 type="submit"
-                className="mt-3 md:mt-0 md:absolute md:right-2 md:top-2 md:bottom-2 bg-white text-black hover:bg-gray-200 font-bold py-4 md:py-0 px-8 rounded-2xl md:rounded-full transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
+                disabled={isSubmitting}
+                className="mt-3 md:mt-0 md:absolute md:right-2 md:top-2 md:bottom-2 bg-white text-black hover:bg-gray-200 font-bold py-4 md:py-0 px-8 rounded-2xl md:rounded-full transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Notify Me <Bell className="w-4 h-4" />
+                {isSubmitting ? 'Sending...' : 'Notify Me'} <Bell className="w-4 h-4" />
               </button>
             </form>
+          )}
+          {submitError && (
+            <p className="mt-3 text-sm text-red-300">{submitError}</p>
           )}
         </div>
       </main>
